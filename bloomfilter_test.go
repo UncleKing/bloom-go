@@ -35,12 +35,10 @@ func benchmarkNaiveBloomFilter_Add(b *testing.B, count int) {
 	filter := BloomFilter{}
 	filter.Default()
 	for i := 0; i < b.N; i++ {
-
 		for j := 0; j < count; j++ {
 			filter.Add(&DefaultFilterObject{str: fmt.Sprintf("%d", j)})
 		}
 	}
-
 }
 
 func BenchmarkNaiveBloomFilter_Add10(b *testing.B) {
@@ -118,6 +116,100 @@ func TestCBFDelete(t *testing.T) {
 
 	filter := CountingBloomFilter{}
 	filter.Default()
+	for i := 0; i < len(words); i++ {
+		filter.Add(&DefaultFilterObject{str: words[i]})
+	}
+
+	for i := 0; i < len(words); i++ {
+		assert.True(t, filter.Exists(&DefaultFilterObject{str: words[i]}),
+			fmt.Sprintf("'%s' should be marked\n", words[i]))
+	}
+
+	for i := 0; i < len(words); i++ {
+		assert.True(t, filter.Delete(&DefaultFilterObject{str: words[i]}),
+			fmt.Sprintf("'%s' should be Deleted\n", words[i]))
+	}
+
+	for i := 0; i < len(words); i++ {
+		assert.False(t, filter.Exists(&DefaultFilterObject{str: words[i]}),
+			fmt.Sprintf("'%s' shouldn't be marked\n", words[i]))
+	}
+
+	for i := 0; i < len(words); i++ {
+		assert.False(t, filter.Delete(&DefaultFilterObject{str: words[i]}),
+			fmt.Sprintf("'%s' should be Deleted\n", words[i]))
+	}
+
+}
+
+func TestCustomHashBloomFilter(t *testing.T) {
+	sh1 := SimpleHasher{}
+	sh1.prefix = "sh1"
+
+	sh2 := SimpleHasher{}
+	sh2.prefix = "sh2"
+
+	filter := BloomFilter{}
+	filter.New(1024, &sh1, &sh2)
+
+	for i := 0; i < len(words); i++ {
+
+		filter.Add(&DefaultFilterObject{str: words[i]})
+	}
+
+	for i := 0; i < len(words); i++ {
+		assert.True(t, filter.Exists(&DefaultFilterObject{str: words[i]}),
+			fmt.Sprintf("'%s' should be marked\n", words[i]))
+	}
+
+	filter.Clear()
+
+	for i := 0; i < len(words); i++ {
+		assert.False(t, filter.Exists(&DefaultFilterObject{str: words[i]}),
+			fmt.Sprintf("'%s' shouldn't be marked\n", words[i]))
+	}
+}
+
+func TestCustomHashCBF(t *testing.T) {
+
+	sh1 := SimpleHasher{}
+	sh1.prefix = "sh1"
+
+	sh2 := SimpleHasher{}
+	sh2.prefix = "sh2"
+
+	filter := CountingBloomFilter{}
+	filter.New(1024, &sh1, &sh2)
+
+	for i := 0; i < len(words); i++ {
+
+		filter.Add(&DefaultFilterObject{str: words[i]})
+	}
+
+	for i := 0; i < len(words); i++ {
+		assert.True(t, filter.Exists(&DefaultFilterObject{str: words[i]}),
+			fmt.Sprintf("'%s' should be marked\n", words[i]))
+	}
+
+	filter.Clear()
+
+	for i := 0; i < len(words); i++ {
+		assert.False(t, filter.Exists(&DefaultFilterObject{str: words[i]}),
+			fmt.Sprintf("'%s' shouldn't be marked\n", words[i]))
+	}
+}
+
+func TestCustomHashCBFDelete(t *testing.T) {
+
+	sh1 := SimpleHasher{}
+	sh1.prefix = "sh1"
+
+	sh2 := SimpleHasher{}
+	sh2.prefix = "sh2"
+
+	filter := CountingBloomFilter{}
+	filter.New(1024, &sh1, &sh2)
+
 	for i := 0; i < len(words); i++ {
 		filter.Add(&DefaultFilterObject{str: words[i]})
 	}
