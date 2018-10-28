@@ -9,7 +9,7 @@ import (
 var words = []string{"Test1", "Test2", "Test3", "Test4"}
 
 func TestBloomfilter(t *testing.T) {
-	filter := NaiveBloomFilter{}
+	filter := BloomFilter{}
 	filter.Default()
 
 	for i := 0; i < len(words); i++ {
@@ -32,7 +32,7 @@ func TestBloomfilter(t *testing.T) {
 
 func benchmarkNaiveBloomFilter_Add(b *testing.B, count int) {
 
-	filter := NaiveBloomFilter{}
+	filter := BloomFilter{}
 	filter.Default()
 	for i := 0; i < b.N; i++ {
 
@@ -94,7 +94,7 @@ func BenchmarkSimpleHasher_Hash100000(b *testing.B) {
 
 func TestCBF(t *testing.T) {
 
-	filter := NaiveCountingBloomFilter{}
+	filter := CountingBloomFilter{}
 	filter.Default()
 	for i := 0; i < len(words); i++ {
 
@@ -116,7 +116,7 @@ func TestCBF(t *testing.T) {
 
 func TestCBFDelete(t *testing.T) {
 
-	filter := NaiveCountingBloomFilter{}
+	filter := CountingBloomFilter{}
 	filter.Default()
 	for i := 0; i < len(words); i++ {
 		filter.Add(&DefaultFilterObject{str: words[i]})
