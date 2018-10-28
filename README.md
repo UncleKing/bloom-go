@@ -5,6 +5,7 @@ Customizable Bloom filter & Counting Bloom Filter Implementations
 
 [![Build Status][travis-badge]][travis-link]
 [![Report Card][report-badge]][report-link]
+[![Code Coverage](https://codecov.io/gh/UncleKing/bloomfilter-go/branch/master/graph/badge.svg)](https://codecov.io/gh/UncleKing/bloomfilter-go)
 
 ## Installation
 
